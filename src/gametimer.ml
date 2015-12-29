@@ -1,17 +1,17 @@
-type timerFlag = { mutable running: bool }
+type timerInfo = {
+    mutable running: bool;
+    mutable speed: float
+}
 
-let rec timer_loop (flag, callback) =
-    if (flag.running) then
+let rec timer_loop (timer_info, callback) =
+    if (timer_info.running) then
     ( 
-        Thread.delay 0.5;
+        Thread.delay timer_info.speed;
         callback ();
-        timer_loop (flag, callback)
+        timer_loop (timer_info, callback)
     )
     else
         Thread.exit
 
-let create_game_timer timer_flag =
-    let timer_cb () = Sdlevent.add [USER 0] in
-    let timer_thread = Thread.create timer_loop (timer_flag, timer_cb) in
-    
-    timer_thread
+let create_game_timer callback timer_info =
+    Thread.create timer_loop (timer_info, callback)

@@ -1,12 +1,22 @@
 open Sdlevent
 open Sdlkey
-open Gametimer
-type gameState = { mutable position_x: int; mutable position_y: int }
+
+type point = { mutable x: int; mutable y: int }
+type gameState = {
+    mutable position: point;
+    mutable timer_info: Gametimer.timerInfo
+}
     
 let rec loop game_state =
     match wait_event () with
     | KEYDOWN { keysym = KEY_ESCAPE } ->
         print_endline "You pressed escape! The fun is over now."
+    | KEYDOWN { keysym = KEY_LEFT } ->
+        game_state.timer_info.speed <- game_state.timer_info.speed -. 0.1;
+        loop game_state
+    | KEYDOWN { keysym = KEY_RIGHT } ->
+        game_state.timer_info.speed <- game_state.timer_info.speed +. 0.1;
+        loop game_state
     | USER 0 ->
         print_endline "tick!";
         loop game_state
@@ -15,12 +25,15 @@ let rec loop game_state =
         loop game_state
     
 let init () =
-    let game_state = { position_x = 200; position_y = 0 } in
-    let timer_flag = { running = true } in
-    let timer_thread = create_game_timer (timer_flag) in
+    let game_state = {
+        position = { x = 200; y = 0 };
+        timer_info = { running = true; speed = 1.0 }
+    } in
+    let timer_cb () = Sdlevent.add [USER 0] in
+    let timer_thread = Gametimer.create_game_timer timer_cb game_state.timer_info in
     
     loop game_state;
-    timer_flag.running <- false;
+    game_state.timer_info.running <- false;
     Thread.join timer_thread    
 
 let main () =
