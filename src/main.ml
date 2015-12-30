@@ -1,23 +1,13 @@
-type gameInfo = {
-    mutable game_state:     Gamestate.gameState;
-    mutable timer_info:     Gametimer.timerInfo;
-    mutable pencil_info:    Pencil.pencilInfo
-}
-    
-let rec loop game_info =
+let rec loop game =
     match Sdlevent.wait_event () with
     | KEYDOWN { keysym = KEY_ESCAPE } ->
         print_endline "You pressed escape! The fun is over now."
-    | USER 0 ->
-        game_info.game_state.position.y <- game_info.game_state.position.y + 30;
-        Pencil.draw game_info.game_state game_info.pencil_info;
-        loop game_info
     | event ->
-        Controller.handle game_info.game_state event;
-        loop game_info
+        Controller.handle game event;
+        loop game
     
 let init () =
-    let game_info = {
+    let game = ({
         game_state  = Gamestate.new_game ();
         timer_info  = {
             running = true;
@@ -25,15 +15,17 @@ let init () =
         };
         pencil_info = {
             screen  = Sdlvideo.set_video_mode 800 600 [`DOUBLEBUF];
-            square  = Sdlloader.load_image "assets/square.png";
+            squares = Array.init 4 (fun i -> Sdlloader.load_image ("assets/square_" ^ (string_of_int i) ^ ".png"));
+            board   = Sdlloader.load_image "assets/board.png";
             (*font    = Sdlttf.open_font font_filename 24*)
         }
-    } in
+    }: Controller.gameInfo) in
     let timer_cb () = Sdlevent.add [USER 0] in
-    let timer_thread = Gametimer.create_game_timer timer_cb game_info.timer_info in
-    
-    loop game_info;
-    game_info.timer_info.running <- false;
+    let timer_thread = Gametimer.create_game_timer timer_cb game.timer_info in
+        
+    Pencil.draw game.game_state game.pencil_info;
+    loop game;
+    game.timer_info.running <- false;
     Thread.join timer_thread    
 
 let main () =

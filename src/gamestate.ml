@@ -3,6 +3,10 @@ type point = {
     mutable y: int
 }
 
+type field =
+    | Empty
+    | Square of int
+
 type state =
     | Running
     | Paused
@@ -11,11 +15,13 @@ type state =
 type gameState = {
     mutable state:      state;
     mutable position:   point;
-    mutable speed:      float
+    mutable board:      field array array;
+    board_size:         point;    
 }
 
 let new_game () = {
     state       = Running;
     position    = { x = 200; y = 0 };
-    speed       = 1.0
+    board       = Array.make_matrix 10 18 Empty;
+    board_size  = { x = 10; y = 18 }
 }
