@@ -1,13 +1,13 @@
-type gameInfo = {
+type gameData = {
     mutable game_state:     Gamestate.gameState;
-    mutable timer_info:     Gametimer.timerInfo;
-    mutable pencil_info:    Pencil.pencilInfo
+    mutable timer_data:     Gametimer.timerData;
+    mutable pencil_data:    Pencil.pencilData
 }
 
-let handle game_info event =
-    let game   = game_info.game_state in
-    let timer   = game_info.timer_info in
-    let pencil  = game_info.pencil_info in
+let handle game_data event =
+    let game   = game_data.game_state in
+    let timer   = game_data.timer_data in
+    let pencil  = game_data.pencil_data in
     
     match event with
     | Sdlevent.USER 0 ->

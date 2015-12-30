@@ -9,23 +9,23 @@ let rec loop game =
 let init () =
     let game = ({
         game_state  = Gamestate.new_game ();
-        timer_info  = {
+        timer_data  = {
             running = true;
             speed   = 1.0
         };
-        pencil_info = {
+        pencil_data = {
             screen  = Sdlvideo.set_video_mode 800 600 [`DOUBLEBUF];
             squares = Array.init 4 (fun i -> Sdlloader.load_image ("assets/square_" ^ (string_of_int i) ^ ".png"));
             board   = Sdlloader.load_image "assets/board.png";
             (*font    = Sdlttf.open_font font_filename 24*)
         }
-    }: Controller.gameInfo) in
+    }: Controller.gameData) in
     let timer_cb () = Sdlevent.add [USER 0] in
-    let timer_thread = Gametimer.create_game_timer timer_cb game.timer_info in
+    let timer_thread = Gametimer.create_game_timer timer_cb game.timer_data in
         
-    Pencil.draw game.game_state game.pencil_info;
+    Pencil.draw game.game_state game.pencil_data;
     loop game;
-    game.timer_info.running <- false;
+    game.timer_data.running <- false;
     Thread.join timer_thread    
 
 let main () =
