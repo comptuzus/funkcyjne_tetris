@@ -1,4 +1,6 @@
-let rec loop game =
+open Types
+
+let rec loop (game: gameData) =
     match Sdlevent.wait_event () with
     | KEYDOWN { keysym = KEY_ESCAPE } ->
         print_endline "You pressed escape! The fun is over now."
@@ -7,7 +9,7 @@ let rec loop game =
         loop game
     
 let init () =
-    let game = ({
+    let game = {
         game_state  = Gamestate.new_game ();
         timer_data  = {
             running = true;
@@ -19,7 +21,7 @@ let init () =
             board   = Sdlloader.load_image "assets/board.png";
             (*font    = Sdlttf.open_font font_filename 24*)
         }
-    }: Controller.gameData) in
+    } in
     let timer_cb () = Sdlevent.add [USER 0] in
     let timer_thread = Gametimer.create_game_timer timer_cb game.timer_data in
         
@@ -29,6 +31,7 @@ let init () =
     Thread.join timer_thread    
 
 let main () =
+    Random.self_init ();
     Sdl.init [`VIDEO; `AUDIO];
     at_exit Sdl.quit;
     Sdlttf.init ();

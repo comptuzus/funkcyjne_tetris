@@ -1,9 +1,6 @@
-type timerData = {
-    mutable running: bool;
-    mutable speed: float
-}
+open Types
 
-let rec timer_loop (timer_data, callback) =
+let rec timer_loop ((timer_data: timerData), callback) =
     if (timer_data.running) then
     ( 
         Thread.delay timer_data.speed;

@@ -1,17 +1,9 @@
-open Gamestate
+open Types
 
-type pencilData = {
-    screen:     Sdlvideo.surface;
-    squares:    Sdlvideo.surface array;
-    board:      Sdlvideo.surface;
-    (*font:   Sdlttf.font*)
-}
-
-let draw game_state pencil_data =
+let draw (game_state: gameState) (pencil_data: pencilData) =
     let board_offset = { x = 50; y = 35; } in
-    (* WTF: PO USUNIĘCIU NASTĘPNEJ LINII PROGRAM SIĘ NIE KOMPILUJE XDDDD *)
-    let position_of_image = Sdlvideo.rect (board_offset.x + game_state.position.x) (board_offset.y + game_state.position.y) 30 30 in
     let position_of_board = Sdlvideo.rect (board_offset.x - 1) (board_offset.y - 1) 302 542 in
+    let brick = game_state.brick in
     let calc_rect x y =
         Sdlvideo.rect (x * 30 + board_offset.x) (y * 30 + board_offset.y) 30 30 in
     
@@ -19,12 +11,15 @@ let draw game_state pencil_data =
     
     (* BOARD DRAWING *)
     Sdlvideo.blit_surface ~dst_rect:position_of_board ~src:pencil_data.board ~dst:pencil_data.screen ();
-    Array.iteri (fun x column -> 
-                    Array.iteri (fun y field ->
-                        match field with
-                        | Empty         ->  ()
-                        | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect x y) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ()
-                    ) column
-    ) game_state.board; 
+    Utils.iterate game_state.board (fun x y field ->
+        match field with
+        | Empty         ->  ()
+        | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect x y) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ());
+    
+    (* BRICK DRAWING *)
+    Utils.iterate game_state.brick.box (fun x y field ->
+        match field with
+        | Empty         ->  ()
+        | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect (x + brick.position.x) (y + brick.position.y)) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ());
     
     Sdlvideo.flip pencil_data.screen

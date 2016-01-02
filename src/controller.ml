@@ -1,8 +1,4 @@
-type gameData = {
-    mutable game_state:     Gamestate.gameState;
-    mutable timer_data:     Gametimer.timerData;
-    mutable pencil_data:    Pencil.pencilData
-}
+open Types
 
 let handle game_data event =
     let game   = game_data.game_state in
@@ -11,6 +7,10 @@ let handle game_data event =
     
     match event with
     | Sdlevent.USER 0 ->
-        print_endline "tick!"
+        game.brick.position.y <- game.brick.position.y + 1;
+        Pencil.draw game pencil
+    | KEYDOWN { keysym = KEY_SPACE } ->
+        Brick.rotate game.brick;
+        Pencil.draw game pencil
     | event ->
         print_endline (Sdlevent.string_of_event event)
