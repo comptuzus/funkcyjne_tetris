@@ -7,7 +7,7 @@ let draw (game_state: gameState) (pencil_data: pencilData) =
     let calc_rect x y =
         Sdlvideo.rect (x * 30 + board_offset.x) (y * 30 + board_offset.y) 30 30 in
     
-    Sdlvideo.fill_rect pencil_data.screen (Sdlvideo.map_RGB pencil_data.screen (54, 54, 54));
+    Sdlvideo.fill_rect pencil_data.screen (Sdlvideo.map_RGB pencil_data.screen (22, 25, 29));
     
     (* BOARD DRAWING *)
     Sdlvideo.blit_surface ~dst_rect:position_of_board ~src:pencil_data.board ~dst:pencil_data.screen ();

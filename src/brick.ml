@@ -36,38 +36,35 @@ let create number =
         box         = Array.make_matrix size size Empty
     } in
     
-    match number with
+    (match number with
     | 0 ->
         brick.box.(0).(0) <- Square color;
         brick.box.(1).(0) <- Square color;
         brick.box.(0).(1) <- Square color;
         brick.box.(1).(1) <- Square color;
-        rotate_n_times brick rotation
     | 1 ->
         brick.box.(0).(0) <- Square color;
         brick.box.(1).(0) <- Square color;
         brick.box.(2).(0) <- Square color;
         brick.box.(3).(0) <- Square color;
-        rotate_n_times brick rotation
     | 2 ->
         brick.box.(0).(0) <- Square color;
         brick.box.(0).(1) <- Square color;
         brick.box.(1).(1) <- Square color;
         brick.box.(0).(2) <- Square color;
-        rotate_n_times brick rotation
     | 3 ->
         brick.box.(0).(0) <- Square color;
         brick.box.(1).(0) <- Square color;
         brick.box.(1).(1) <- Square color;
         brick.box.(2).(1) <- Square color;
-        rotate_n_times brick rotation
     | 4 ->
         brick.box.(1).(0) <- Square color;
         brick.box.(2).(0) <- Square color;
         brick.box.(0).(1) <- Square color;
         brick.box.(1).(1) <- Square color;
-        rotate_n_times brick rotation
-    
+    );
+    rotate_n_times brick rotation
+        
     
     
     

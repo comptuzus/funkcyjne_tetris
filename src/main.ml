@@ -5,8 +5,10 @@ let rec loop (game: gameData) =
     | KEYDOWN { keysym = KEY_ESCAPE } ->
         print_endline "You pressed escape! The fun is over now."
     | event ->
-        Controller.handle game event;
+        (if not (game.game_state.state = End)
+        then Controller.handle game event;);
         loop game
+        
     
 let init () =
     let game = {
