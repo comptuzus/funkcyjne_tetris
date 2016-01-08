@@ -4,7 +4,7 @@ let collision game =
     let not_ret = { col_res = true } in
 
     Utils.iterate game.brick.box (
-        fun x y field ->
+        fun y x field ->
             match field with
             | Empty     ->  ()
             | Square _  ->
@@ -14,54 +14,66 @@ let collision game =
                 not_ret.col_res <- not_ret.col_res &&
                     x >= 0 && x < game.board_size.x &&
                     y >= 0 && y < game.board_size.y &&
-                    game.board.(x).(y) = Empty
+                    game.board.(y).(x) = Empty
     );
     not not_ret.col_res
-    
-let remove_line game n =
+
+let remove_line (game: gameState) n =
     let rec aux i =
-        if i > 1
-        then
-    Utils.iterate game.board (
-        fun x y field ->
-            if y = 0
-            then game.board.(x).(y) <- Empty
-            else    if y < n
-                    then game.board.(x).(y + 1) <- field
-    )
-    
+        if i > 0
+        then (
+            game.board.(i) <- game.board.(i - 1);
+            aux (i - 1)
+        )
+    in
+
+    aux n;
+    Array.fill game.board.(0) 0 game.board_size.x Empty
+
 let remove_lines game =
-    let lines = Array.make game.board_size.y 0 in
-    
-    Utils.iterate game.board (
-        fun x y field ->
-            match field with
-            | Empty     ->  ()
-            | Square _  ->  lines.(y) <- lines.(y) + 1
+    let a = max game.brick.position.y 0 in
+    let b = min (game.brick.position.y + (Array.length game.brick.box)) 18 in
+    let counter = { lines_removed = 0 } in
+
+    Utils.iteri_ab game.board a b (
+        fun y row ->
+            if  Utils.every row (
+                    fun field ->
+                        not (field = Empty)
+                )
+            then (
+                remove_line game y;
+                counter.lines_removed <- counter.lines_removed + 1
+            )
     );
-    Array.iteri (
-        fun y counter ->
-            if counter = game.board_size.y
-            then remove_line game y
-    ) lines
-    
-let fall game =
+    counter
+
+let copy_brick_to_board game =
+    Utils.iterate game.brick.box (
+        fun y x field ->
+            match field with
+            | Empty         -> ()
+            | Square color  ->
+                let x = x + game.brick.position.x in
+                let y = y + game.brick.position.y in
+                game.board.(y).(x) <- Square color
+    )
+
+let fall game timer =
     game.brick.position.y <- game.brick.position.y + 1;
     if collision game
     then (
         game.brick.position.y <- game.brick.position.y - 1;
-        Utils.iterate game.brick.box (
-            fun x y field ->
-                match field with
-                | Empty         -> ()
-                | Square color  ->
-                    let x = x + game.brick.position.x in
-                    let y = y + game.brick.position.y in
-                    game.board.(x).(y) <- Square color
-        );
-        remove_lines game;        
-        game.brick <- Brick.create (Random.int 5);
-        if collision game
+        copy_brick_to_board game;
+
+        let lines_removed = remove_lines game in
+        game.points <- game.points + lines_removed.lines_removed;
+        timer.speed <- timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed);
+        print_endline (string_of_int game.points ^ " - " ^ (string_of_float timer.speed) ^ " - " ^ (string_of_int game.brick_n));
+
+        game.brick <- Brick.create_random_brick ();
+        game.brick_n <- game.brick_n + 1;
+        if      collision game
         then    game.state <- End
     )
 
@@ -73,12 +85,14 @@ let handle game_data event =
 
     match event with
     | Sdlevent.USER 0 ->
-        fall game;
+        fall game timer;
         Pencil.draw game pencil
-        
+
     | KEYDOWN { keysym = KEY_DOWN } ->
-        fall game;
-        Pencil.draw game pencil
+        timer.speed <- timer.speed *. 0.1;
+        Sdlevent.add [USER 0]
+    | KEYUP { keysym = KEY_DOWN } ->
+        timer.speed <- timer.speed *. 10.0;
     | KEYDOWN { keysym = KEY_LEFT } ->
         game.brick.position.x <- game.brick.position.x - 1;
         if collision game
@@ -95,4 +109,4 @@ let handle game_data event =
         then    ignore (Brick.rotate_n_times game.brick 3);
         Pencil.draw game pencil
     | event ->
-        print_endline (Sdlevent.string_of_event event)
+        ()

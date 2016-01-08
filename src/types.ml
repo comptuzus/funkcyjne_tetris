@@ -22,6 +22,8 @@ type gameState = {
     mutable board:      field array array;
     board_size:         point;
     mutable brick:      brick;
+    mutable points:     int;
+    mutable brick_n:    int;
 }
 
 type pencilData = {
@@ -44,4 +46,8 @@ type gameData = {
 
 type collisionResult = {
     mutable col_res:    bool;
+}
+
+type linesRemoved = {
+    mutable lines_removed:  int;
 }

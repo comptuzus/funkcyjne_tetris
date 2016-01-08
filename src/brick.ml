@@ -7,20 +7,19 @@ let rotate brick =
     let size        = box_size brick in
     let new_box     = Array.make_matrix size size Empty in
     
-    Utils.iterate brick.box (fun x y field ->
+    Utils.iterate brick.box (fun y x field ->
         let (x, y) = (size - 1 - y, x) in
-        new_box.(x).(y) <- field);
+        new_box.(y).(x) <- field);
     brick.box <- new_box
     
 let rotate_n_times brick n =
-    let rec aux i brick =
-        if (i = 0)
-        then brick
-        else (
+    let rec aux i =
+        if i > 0
+        then (
             rotate brick;
-            aux (i - 1) brick
+            aux (i - 1)
         )
-    in aux n brick
+    in aux n
     
 let create number =
     let color   =   Random.int 4 in
@@ -44,43 +43,41 @@ let create number =
         brick.box.(1).(1) <- Square color;
     | 1 ->
         brick.box.(0).(0) <- Square color;
-        brick.box.(1).(0) <- Square color;
-        brick.box.(2).(0) <- Square color;
-        brick.box.(3).(0) <- Square color;
+        brick.box.(0).(1) <- Square color;
+        brick.box.(0).(2) <- Square color;
+        brick.box.(0).(3) <- Square color;
     | 2 ->
         brick.box.(0).(0) <- Square color;
-        brick.box.(0).(1) <- Square color;
+        brick.box.(1).(0) <- Square color;
         brick.box.(1).(1) <- Square color;
-        brick.box.(0).(2) <- Square color;
+        brick.box.(2).(0) <- Square color;
     | 3 ->
         brick.box.(0).(0) <- Square color;
-        brick.box.(1).(0) <- Square color;
-        brick.box.(1).(1) <- Square color;
-        brick.box.(2).(1) <- Square color;
-    | 4 ->
-        brick.box.(1).(0) <- Square color;
-        brick.box.(2).(0) <- Square color;
         brick.box.(0).(1) <- Square color;
         brick.box.(1).(1) <- Square color;
+        brick.box.(1).(2) <- Square color;
+    | 4 ->
+        brick.box.(0).(1) <- Square color;
+        brick.box.(0).(2) <- Square color;
+        brick.box.(1).(0) <- Square color;
+        brick.box.(1).(1) <- Square color;
+    | 5 ->
+        brick.box.(0).(0) <- Square color;
+        brick.box.(0).(1) <- Square color;
+        brick.box.(0).(2) <- Square color;
+        brick.box.(1).(0) <- Square color;
+    | 6 ->
+        brick.box.(0).(0) <- Square color;
+        brick.box.(0).(1) <- Square color;
+        brick.box.(0).(2) <- Square color;
+        brick.box.(1).(2) <- Square color;
     );
-    rotate_n_times brick rotation
+    rotate_n_times brick rotation;
+    brick
+    
+let create_random_brick () =
+    create (Random.int 6)
         
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     (*
         BRICK TYPES:
         0:
@@ -102,4 +99,12 @@ let create number =
         4:
              xx
             xx
+        
+        5:
+            xxx
+            x
+            
+        6:
+            xxx
+              x
     *)

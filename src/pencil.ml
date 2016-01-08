@@ -11,13 +11,13 @@ let draw (game_state: gameState) (pencil_data: pencilData) =
     
     (* BOARD DRAWING *)
     Sdlvideo.blit_surface ~dst_rect:position_of_board ~src:pencil_data.board ~dst:pencil_data.screen ();
-    Utils.iterate game_state.board (fun x y field ->
+    Utils.iterate game_state.board (fun y x field ->
         match field with
         | Empty         ->  ()
         | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect x y) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ());
     
     (* BRICK DRAWING *)
-    Utils.iterate game_state.brick.box (fun x y field ->
+    Utils.iterate game_state.brick.box (fun y x field ->
         match field with
         | Empty         ->  ()
         | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect (x + brick.position.x) (y + brick.position.y)) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ());
