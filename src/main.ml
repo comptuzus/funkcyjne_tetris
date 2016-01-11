@@ -32,7 +32,7 @@ let init () =
     let timer_cb () = Sdlevent.add [USER 0] in
     let timer_thread = Gametimer.create_game_timer timer_cb game.timer_data in
         
-    Sdlvideo.set_alpha game.pencil_data.white_surf 30;
+    Sdlvideo.set_alpha game.pencil_data.white_surf 80;
     Pencil.draw game.game_state game.pencil_data;
     loop game;
     game.timer_data.running <- false;
