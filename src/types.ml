@@ -31,7 +31,7 @@ type pencilData = {
     screen:     Sdlvideo.surface;
     squares:    Sdlvideo.surface array;
     board:      Sdlvideo.surface;
-    (*font:   Sdlttf.font*)
+    font:   Sdlttf.font
 }
 
 type timerData = {

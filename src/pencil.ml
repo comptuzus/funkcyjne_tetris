@@ -23,9 +23,12 @@ let draw (game_state: gameState) (pencil_data: pencilData) =
         | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect (x + brick.position.x) (y + brick.position.y) board_offset.x board_offset.y) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ());
         
     (* NEXT_BRICK DRAWING *)
-    (*Utils.iterate game_state.next_brick.box (fun y x field ->
+    Utils.iterate game_state.next_brick.box (fun y x field ->
         match field with
         | Empty         ->  ()
         | Square color  ->  Sdlvideo.blit_surface ~dst_rect:(calc_rect x y 500 35) ~src:pencil_data.squares.(color) ~dst:pencil_data.screen ());
-    *)
+    
+    
+    let text = Sdlttf.render_text_blended pencil_data.font "Werner to kutaz" ~fg:Sdlvideo.white in
+    Sdlvideo.blit_surface ~dst_rect:(calc_rect 0 0 0 0) ~src:text ~dst:pencil_data.screen ();
     Sdlvideo.flip pencil_data.screen

@@ -21,7 +21,7 @@ let init () =
             screen  = Sdlvideo.set_video_mode 800 600 [`DOUBLEBUF];
             squares = Array.init 4 (fun i -> Sdlloader.load_image ("assets/square_" ^ (string_of_int i) ^ ".png"));
             board   = Sdlloader.load_image "assets/board.png";
-            (*font    = Sdlttf.open_font font_filename 24*)
+            font    = Sdlttf.open_font "assets/Roboto-Regular.ttf" 24
         }
     } in
     let timer_cb () = Sdlevent.add [USER 0] in
