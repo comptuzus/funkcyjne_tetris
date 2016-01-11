@@ -32,7 +32,10 @@ type pencilData = {
     squares:    Sdlvideo.surface array;
     board:      Sdlvideo.surface;
     preview:    Sdlvideo.surface;
-    font:       Sdlttf.font
+    llamacorn:  Sdlvideo.surface;
+    white_surf: Sdlvideo.surface;
+    font_40:    Sdlttf.font;
+    font_30:    Sdlttf.font
 }
 
 type timerData = {
