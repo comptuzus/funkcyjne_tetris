@@ -33,7 +33,7 @@ type pencilData = {
     board:      Sdlvideo.surface;
     preview:    Sdlvideo.surface;
     llamacorn:  Sdlvideo.surface;
-    white_surf: Sdlvideo.surface;
+    black_surf: Sdlvideo.surface;
     font_40:    Sdlttf.font;
     font_30:    Sdlttf.font
 }

@@ -47,7 +47,7 @@ let draw (game_state: gameState) (pencil_data: pencilData) =
         let llamapoints_3 = Sdlttf.render_text_blended pencil_data.font_30 "it had only" ~fg:Sdlvideo.black in
         let llamapoints_4 = Sdlttf.render_text_blended pencil_data.font_40 (string_of_int (game_state.points + 1) ^ " points") ~fg:Sdlvideo.red in
 
-        Sdlvideo.blit_surface ~dst_rect:(calc_rect 0 0 { x = 0; y = 0 }) ~src:pencil_data.white_surf ~dst:pencil_data.screen ();
+        Sdlvideo.blit_surface ~dst_rect:(calc_rect 0 0 { x = 0; y = 0 }) ~src:pencil_data.black_surf ~dst:pencil_data.screen ();
         Sdlvideo.blit_surface ~dst_rect:(calc_rect 0 0 { x = 200; y = 200 }) ~src:pencil_data.llamacorn ~dst:pencil_data.screen ();
         Sdlvideo.blit_surface ~dst_rect:(calc_rect 0 0 { x = 220; y = 150 }) ~src:llamapoints_1 ~dst:pencil_data.screen ();
         Sdlvideo.blit_surface ~dst_rect:(calc_rect 0 0 { x = 50; y = 200 }) ~src:llamapoints_2 ~dst:pencil_data.screen ();
