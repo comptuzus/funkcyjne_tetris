@@ -22,7 +22,7 @@ let remove_line (game: gameState) n =
     let rec aux i =
         if i > 0
         then (
-            game.board.(i) <- game.board.(i - 1);
+            game.board.(i) <- Array.copy game.board.(i - 1);
             aux (i - 1)
         )
     in
@@ -32,7 +32,7 @@ let remove_line (game: gameState) n =
 
 let remove_lines game =
     let a = max game.brick.position.y 0 in
-    let b = min (game.brick.position.y + (Array.length game.brick.box)) 18 in
+    let b = min (game.brick.position.y + (Array.length game.brick.box)) game.board_size.y in
     let counter = { lines_removed = 0 } in
 
     Utils.iteri_ab game.board a b (
@@ -48,7 +48,7 @@ let remove_lines game =
     );
     counter
 
-let copy_brick_to_board game =
+let copy_brick_to_board (game: gameState) =    
     Utils.iterate game.brick.box (
         fun y x field ->
             match field with
@@ -56,10 +56,10 @@ let copy_brick_to_board game =
             | Square color  ->
                 let x = x + game.brick.position.x in
                 let y = y + game.brick.position.y in
-                game.board.(y).(x) <- Square color
+                game.board.(y).(x) <- Square color;
     )
 
-let fall game timer =
+let fall (game: gameState) (timer: timerData) =
     game.brick.position.y <- game.brick.position.y + 1;
     if collision game
     then (
@@ -69,10 +69,11 @@ let fall game timer =
         let lines_removed = remove_lines game in
         game.points <- game.points + lines_removed.lines_removed;
         timer.speed <- timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed);
-        print_endline (string_of_int game.points ^ " - " ^ (string_of_float timer.speed) ^ " - " ^ (string_of_int game.brick_n));
 
-        game.brick <- Brick.create_random_brick ();
+        game.brick <- game.next_brick;
+        game.next_brick <- Brick.create_random_brick ();
         game.brick_n <- game.brick_n + 1;
+        print_endline (string_of_int game.points ^ " - " ^ (string_of_float timer.speed) ^ " - " ^ (string_of_int game.brick_n));        
         if      collision game
         then    game.state <- End
     )
@@ -108,5 +109,7 @@ let handle game_data event =
         if collision game
         then    ignore (Brick.rotate_n_times game.brick 3);
         Pencil.draw game pencil
+    | KEYDOWN { keysym = KEY_SPACE } ->
+        game.state <- End
     | event ->
         ()

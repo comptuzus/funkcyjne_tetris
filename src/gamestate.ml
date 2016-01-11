@@ -5,6 +5,7 @@ let new_game () = {
     board       = Array.make_matrix 18 10 Empty;
     board_size  = { x = 10; y = 18 };
     brick       = Brick.create_random_brick ();
+    next_brick  = Brick.create_random_brick ();
     points      = 0;
     brick_n     = 1;
 }

@@ -1,14 +1,16 @@
+open Types
+
 let iterate matrix f =
     Array.iteri (fun y row ->
         Array.iteri (fun x field -> f y x field) row
     ) matrix
-    
+
 let every array f =
     Array.fold_left (
         fun acc e ->
             acc && f e
     ) true array
-    
+
 let iteri_ab array a b f =
     let rec aux i =
         if i < b
@@ -17,10 +19,24 @@ let iteri_ab array a b f =
             aux (i + 1)
         )
     in aux a
-    
+
 let rec pow a = function
     | 0 -> 1.0
     | 1 -> a
-    | n -> 
+    | n ->
         let b = pow a (n / 2) in
         b *. b *. (if n mod 2 = 0 then 1.0 else a)
+
+let debug_draw_board (game: gameState) =
+    print_endline "------------------------";
+    Array.iteri (
+        fun y row ->
+            Array.iter (
+                fun field ->
+                    match field with
+                    | Empty     -> print_string " "
+                    | Square c  -> print_int c
+            ) row;
+            print_string "\n"
+    ) game.board;
+    print_endline "------------------------"    

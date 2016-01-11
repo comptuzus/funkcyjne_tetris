@@ -76,7 +76,7 @@ let create number =
     brick
     
 let create_random_brick () =
-    create (Random.int 6)
+    create (Random.int 7)
         
     (*
         BRICK TYPES:

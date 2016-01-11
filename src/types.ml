@@ -22,6 +22,7 @@ type gameState = {
     mutable board:      field array array;
     board_size:         point;
     mutable brick:      brick;
+    mutable next_brick: brick;
     mutable points:     int;
     mutable brick_n:    int;
 }
