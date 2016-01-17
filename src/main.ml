@@ -58,7 +58,7 @@ let main () =
     Sdlmixer.open_audio ();
     at_exit Sdlmixer.close_audio;
     Sdlwm.set_caption "Tetris" "Tetris";
-    Sdlevent.disable_events (make_mask [ACTIVE_EVENT; MOUSEMOTION_EVENT; MOUSEBUTTONDOWN_EVENT; MOUSEBUTTONUP_EVENT]);
+    Sdlevent.disable_events (Sdlevent.make_mask [ACTIVE_EVENT; MOUSEMOTION_EVENT; MOUSEBUTTONDOWN_EVENT; MOUSEBUTTONUP_EVENT]);
     Sdlmouse.show_cursor false;
     run ()
 

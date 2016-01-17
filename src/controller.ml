@@ -76,7 +76,7 @@ let fall (game: gameState) (timer: timerData) =
 
         let lines_removed = remove_lines game in
         game.points <- game.points + lines_removed.lines_removed;
-        timer.speed <- 
+        timer.speed <- max  (timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed))
                             (if game.pressing_down then 0.03 else 0.3);
 
         game.brick <- game.next_brick;
