@@ -119,5 +119,7 @@ let handle (game_data: gameData) event =
         Pencil.draw game pencil
     | KEYDOWN { keysym = KEY_SPACE } ->
         game_end game
+    | KEYDOWN { keysym = KEY_ESCAPE } ->
+        Sdlevent.add [QUIT]
     | event ->
         ()

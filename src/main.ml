@@ -10,17 +10,17 @@ let reset (game: gameData) =
 
 let rec loop (game: gameData) =
     match Sdlevent.wait_event () with
-    | KEYDOWN { keysym = KEY_ESCAPE } ->
+    | QUIT ->
         ()
     | KEYDOWN { keysym = KEY_r } ->
         reset game;
-        loop game        
+        loop game
     | event ->
         (if not (game.game_state.state = End)
         then Controller.handle game event
         else Pencil.draw game.game_state game.pencil_data);
         loop game
-        
+
 let run () =
     let game = {
         game_state  = Gamestate.new_game ();
@@ -42,12 +42,12 @@ let run () =
     } in
     let timer_cb () = Sdlevent.add [USER 0] in
     let timer_thread = Gametimer.create_game_timer timer_cb game.timer_data in
-        
+
     Sdlvideo.set_alpha game.pencil_data.black_surf 150;
     Pencil.draw game.game_state game.pencil_data;
     loop game;
     game.timer_data.running <- false;
-    Thread.join timer_thread    
+    Thread.join timer_thread
 
 let main () =
     Random.self_init ();
@@ -57,6 +57,9 @@ let main () =
     at_exit Sdlttf.quit;
     Sdlmixer.open_audio ();
     at_exit Sdlmixer.close_audio;
+    Sdlwm.set_caption "Tetris" "Tetris";
+    Sdlevent.disable_events (make_mask [ACTIVE_EVENT; MOUSEMOTION_EVENT; MOUSEBUTTONDOWN_EVENT; MOUSEBUTTONUP_EVENT]);
+    Sdlmouse.show_cursor false;
     run ()
 
 let _ = main ()
