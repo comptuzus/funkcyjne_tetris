@@ -25,7 +25,6 @@ type gameState = {
     mutable next_brick: brick;
     mutable points:     int;
     mutable highscore:  int;
-    mutable brick_n:    int;
 }
 
 type pencilData = {
@@ -34,6 +33,7 @@ type pencilData = {
     board:      Sdlvideo.surface;
     preview:    Sdlvideo.surface;
     llamacorn:  Sdlvideo.surface;
+    lyingllama: Sdlvideo.surface;
     black_surf: Sdlvideo.surface;
     font_40:    Sdlttf.font;
     font_30:    Sdlttf.font

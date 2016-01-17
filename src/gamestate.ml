@@ -20,5 +20,4 @@ let new_game () = {
     next_brick  = Brick.create_random_brick ();
     points      = 0;
     highscore   = read_highscore ();
-    brick_n     = 1;
 }

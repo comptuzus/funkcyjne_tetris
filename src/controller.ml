@@ -1,11 +1,14 @@
 open Types
+(* Sdlevent i Sdlkey, żeby nie rzucał warningów przy kompilacji...*)
+open Sdlevent
+open Sdlkey
 
 let game_end (game:gameState) =
     game.state <- End;
     if      (game.points > game.highscore)
     then    Gamestate.write_highscore game.points
 
-let collision game =
+let collision (game: gameState) =
     let not_ret = { col_res = true } in
 
     Utils.iterate game.brick.box (
@@ -35,7 +38,7 @@ let remove_line (game: gameState) n =
     aux n;
     Array.fill game.board.(0) 0 game.board_size.x Empty
 
-let remove_lines game =
+let remove_lines (game: gameState) =
     let a = max game.brick.position.y 0 in
     let b = min (game.brick.position.y + (Array.length game.brick.box)) game.board_size.y in
     let counter = { lines_removed = 0 } in
@@ -73,18 +76,15 @@ let fall (game: gameState) (timer: timerData) =
 
         let lines_removed = remove_lines game in
         game.points <- game.points + lines_removed.lines_removed;
-        timer.speed <- timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed);
+        timer.speed <- min (timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed)) 0.2;
 
         game.brick <- game.next_brick;
         game.next_brick <- Brick.create_random_brick ();
-        game.brick_n <- game.brick_n + 1;
-        print_endline (string_of_int game.points ^ " - " ^ (string_of_float timer.speed) ^ " - " ^ (string_of_int game.brick_n));        
         if      collision game
         then    game_end game
     )
 
-
-let handle game_data event =
+let handle (game_data: gameData) event =
     let game   = game_data.game_state in
     let timer   = game_data.timer_data in
     let pencil  = game_data.pencil_data in
@@ -115,6 +115,6 @@ let handle game_data event =
         then    ignore (Brick.rotate_n_times game.brick 3);
         Pencil.draw game pencil
     | KEYDOWN { keysym = KEY_SPACE } ->
-        game.state <- End
+        game_end game
     | event ->
         ()

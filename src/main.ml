@@ -1,17 +1,27 @@
 open Types
+(* Sdlevent i Sdlkey, żeby nie rzucał warningów przy kompilacji...*)
+open Sdlevent
+open Sdlkey
+
+let reset (game: gameData) =
+    game.game_state <- Gamestate.new_game ();
+    game.timer_data.running <- true;
+    game.timer_data.speed <- 1.0
 
 let rec loop (game: gameData) =
     match Sdlevent.wait_event () with
     | KEYDOWN { keysym = KEY_ESCAPE } ->
-        print_endline "You pressed escape! The fun is over now."
+        ()
+    | KEYDOWN { keysym = KEY_r } ->
+        reset game;
+        loop game        
     | event ->
         (if not (game.game_state.state = End)
         then Controller.handle game event
         else Pencil.draw game.game_state game.pencil_data);
         loop game
         
-    
-let init () =
+let run () =
     let game = {
         game_state  = Gamestate.new_game ();
         timer_data  = {
@@ -24,6 +34,7 @@ let init () =
             board       = Sdlloader.load_image "assets/board.png";
             preview     = Sdlloader.load_image "assets/preview.png";
             llamacorn   = Sdlloader.load_image "assets/llamacorn.png";
+            lyingllama  = Sdlloader.load_image "assets/lyingllama.png";
             black_surf  = Sdlloader.load_image "assets/black_surf.png";
             font_40     = Sdlttf.open_font "assets/8bitOperatorPlus8-Regular.ttf" 40;
             font_30     = Sdlttf.open_font "assets/8bitOperatorPlus8-Regular.ttf" 30
@@ -46,6 +57,6 @@ let main () =
     at_exit Sdlttf.quit;
     Sdlmixer.open_audio ();
     at_exit Sdlmixer.close_audio;
-    init ()
+    run ()
 
 let _ = main ()

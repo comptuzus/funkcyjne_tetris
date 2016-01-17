@@ -7,7 +7,7 @@ sudo apt-get install ocaml-tools libsdl-ocaml-dev
 make
 ```
 
-### Odpalanie
+### Uruchomienie
 ```
 ./tetris
 ```
