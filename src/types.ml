@@ -18,13 +18,14 @@ type state =
     | End
 
 type gameState = {
-    mutable state:      state;
-    mutable board:      field array array;
-    board_size:         point;
-    mutable brick:      brick;
-    mutable next_brick: brick;
-    mutable points:     int;
-    mutable highscore:  int;
+    mutable state:          state;
+    mutable board:          field array array;
+    board_size:             point;
+    mutable brick:          brick;
+    mutable next_brick:     brick;
+    mutable points:         int;
+    mutable highscore:      int;
+    mutable pressing_down:  bool;
 }
 
 type pencilData = {

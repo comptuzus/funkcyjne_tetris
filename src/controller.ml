@@ -76,7 +76,8 @@ let fall (game: gameState) (timer: timerData) =
 
         let lines_removed = remove_lines game in
         game.points <- game.points + lines_removed.lines_removed;
-        timer.speed <- min (timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed)) 0.2;
+        timer.speed <- 
+                            (if game.pressing_down then 0.03 else 0.3);
 
         game.brick <- game.next_brick;
         game.next_brick <- Brick.create_random_brick ();
@@ -95,9 +96,11 @@ let handle (game_data: gameData) event =
         Pencil.draw game pencil
 
     | KEYDOWN { keysym = KEY_DOWN } ->
+        game.pressing_down <- true;
         timer.speed <- timer.speed *. 0.1;
         Sdlevent.add [USER 0]
     | KEYUP { keysym = KEY_DOWN } ->
+        game.pressing_down <- false;
         timer.speed <- timer.speed *. 10.0;
     | KEYDOWN { keysym = KEY_LEFT } ->
         game.brick.position.x <- game.brick.position.x - 1;
