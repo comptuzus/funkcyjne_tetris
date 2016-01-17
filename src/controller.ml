@@ -1,5 +1,10 @@
 open Types
 
+let game_end (game:gameState) =
+    game.state <- End;
+    if      (game.points > game.highscore)
+    then    Gamestate.write_highscore game.points
+
 let collision game =
     let not_ret = { col_res = true } in
 
@@ -75,7 +80,7 @@ let fall (game: gameState) (timer: timerData) =
         game.brick_n <- game.brick_n + 1;
         print_endline (string_of_int game.points ^ " - " ^ (string_of_float timer.speed) ^ " - " ^ (string_of_int game.brick_n));        
         if      collision game
-        then    game.state <- End
+        then    game_end game
     )
 
 

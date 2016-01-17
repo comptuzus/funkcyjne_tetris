@@ -24,6 +24,7 @@ type gameState = {
     mutable brick:      brick;
     mutable next_brick: brick;
     mutable points:     int;
+    mutable highscore:  int;
     mutable brick_n:    int;
 }
 
