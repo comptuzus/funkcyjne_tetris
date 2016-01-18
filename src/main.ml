@@ -12,6 +12,8 @@ let rec loop (game: gameData) =
     match Sdlevent.wait_event () with
     | QUIT ->
         ()
+    | KEYDOWN { keysym = KEY_ESCAPE } ->
+        Sdlevent.add [QUIT]
     | KEYDOWN { keysym = KEY_r } ->
         reset game;
         loop game
@@ -48,9 +50,29 @@ let run () =
     loop game;
     game.timer_data.running <- false;
     Thread.join timer_thread
+    
+let read_command_line () =
+    let seed_set = ref false in
+    let music_set = ref false in
+    let i = ref 0 in
+    
+    while (!i) < (Array.length Sys.argv) do
+        match Sys.argv.(!i) with
+        | "-seed"   ->
+            i := !i + 1;
+            Random.init (int_of_string Sys.argv.(!i));
+            seed_set := true
+        | "-music"  ->
+            i := !i + 1;        
+            music_set := true
+        | _         ->
+            ()
+    done;
+    
+    if (!seed_set)
+    then Random.self_init ()
 
 let main () =
-    Random.self_init ();
     Sdl.init [`VIDEO; `AUDIO];
     at_exit Sdl.quit;
     Sdlttf.init ();

@@ -9,7 +9,7 @@ let game_end (game:gameState) =
     then    Gamestate.write_highscore game.points
 
 let collision (game: gameState) =
-    let not_ret = { col_res = true } in
+    let not_ret = ref true in
 
     Utils.iterate game.brick.box (
         fun y x field ->
@@ -19,12 +19,12 @@ let collision (game: gameState) =
                 let x = x + game.brick.position.x in
                 let y = y + game.brick.position.y in
 
-                not_ret.col_res <- not_ret.col_res &&
+                not_ret := !not_ret &&
                     x >= 0 && x < game.board_size.x &&
                     y >= 0 && y < game.board_size.y &&
                     game.board.(y).(x) = Empty
     );
-    not not_ret.col_res
+    not !not_ret
 
 let remove_line (game: gameState) n =
     let rec aux i =
@@ -41,7 +41,7 @@ let remove_line (game: gameState) n =
 let remove_lines (game: gameState) =
     let a = max game.brick.position.y 0 in
     let b = min (game.brick.position.y + (Array.length game.brick.box)) game.board_size.y in
-    let counter = { lines_removed = 0 } in
+    let counter = ref 0 in
 
     Utils.iteri_ab game.board a b (
         fun y row ->
@@ -51,10 +51,10 @@ let remove_lines (game: gameState) =
                 )
             then (
                 remove_line game y;
-                counter.lines_removed <- counter.lines_removed + 1
+                counter := !counter + 1
             )
     );
-    counter
+    !counter
 
 let copy_brick_to_board (game: gameState) =    
     Utils.iterate game.brick.box (
@@ -75,8 +75,8 @@ let fall (game: gameState) (timer: timerData) =
         copy_brick_to_board game;
 
         let lines_removed = remove_lines game in
-        game.points <- game.points + lines_removed.lines_removed;
-        timer.speed <- max  (timer.speed *. (Utils.pow 0.98  lines_removed.lines_removed))
+        game.points <- game.points + lines_removed;
+        timer.speed <- max  (timer.speed *. (Utils.pow 0.98  lines_removed))
                             (if game.pressing_down then 0.03 else 0.3);
 
         game.brick <- game.next_brick;
@@ -95,31 +95,29 @@ let handle (game_data: gameData) event =
         fall game timer;
         Pencil.draw game pencil
 
-    | KEYDOWN { keysym = KEY_DOWN } ->
+    | KEYDOWN { keysym = KEY_s } ->
         game.pressing_down <- true;
         timer.speed <- timer.speed *. 0.1;
         Sdlevent.add [USER 0]
-    | KEYUP { keysym = KEY_DOWN } ->
+    | KEYUP { keysym = KEY_s } ->
         game.pressing_down <- false;
         timer.speed <- timer.speed *. 10.0;
-    | KEYDOWN { keysym = KEY_LEFT } ->
+    | KEYDOWN { keysym = KEY_a } ->
         game.brick.position.x <- game.brick.position.x - 1;
         if collision game
         then    game.brick.position.x <- game.brick.position.x + 1
         else    Pencil.draw game pencil
-    | KEYDOWN { keysym = KEY_RIGHT } ->
+    | KEYDOWN { keysym = KEY_d } ->
         game.brick.position.x <- game.brick.position.x + 1;
         if collision game
         then    game.brick.position.x <- game.brick.position.x - 1
         else    Pencil.draw game pencil
-    | KEYDOWN { keysym = KEY_UP } ->
+    | KEYDOWN { keysym = KEY_w } ->
         Brick.rotate game.brick;
         if collision game
         then    ignore (Brick.rotate_n_times game.brick 3);
         Pencil.draw game pencil
     | KEYDOWN { keysym = KEY_SPACE } ->
         game_end game
-    | KEYDOWN { keysym = KEY_ESCAPE } ->
-        Sdlevent.add [QUIT]
     | event ->
         ()

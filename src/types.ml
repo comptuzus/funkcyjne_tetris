@@ -50,11 +50,3 @@ type gameData = {
     mutable timer_data:     timerData;
     mutable pencil_data:    pencilData
 }
-
-type collisionResult = {
-    mutable col_res:    bool;
-}
-
-type linesRemoved = {
-    mutable lines_removed:  int;
-}
