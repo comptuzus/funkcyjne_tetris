@@ -55,9 +55,10 @@ let read_command_line () =
     let seed_set = ref false in
     let music_set = ref false in
     let i = ref 0 in
+    let len = Array.length Sys.argv in
     
-    while (!i) < (Array.length Sys.argv) do
-        match Sys.argv.(!i) with
+    while !i < len do
+        (match Sys.argv.(!i) with
         | "-seed"   ->
             i := !i + 1;
             Random.init (int_of_string Sys.argv.(!i));
@@ -67,9 +68,11 @@ let read_command_line () =
             music_set := true
         | _         ->
             ()
+        );
+        i := !i + 1
     done;
     
-    if (!seed_set)
+    if not !seed_set
     then Random.self_init ()
 
 let main () =
