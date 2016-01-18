@@ -82,6 +82,7 @@ let main () =
     Sdlwm.set_caption "Tetris" "Tetris";
     Sdlevent.disable_events (Sdlevent.make_mask [ACTIVE_EVENT; MOUSEMOTION_EVENT; MOUSEBUTTONDOWN_EVENT; MOUSEBUTTONUP_EVENT]);
     Sdlmouse.show_cursor false;
+    read_command_line ();
     run ()
 
 let _ = main ()
