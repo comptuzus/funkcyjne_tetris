@@ -24,4 +24,5 @@ let new_game () = {
     points          = 0;
     highscore       = read_highscore ();
     pressing_down   = false;
+    playing_music   = true;
 }

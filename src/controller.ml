@@ -67,7 +67,7 @@ let copy_brick_to_board (game: gameState) =
                 game.board.(y).(x) <- Square color;
     )
 
-let fall (game: gameState) (timer: timerData) =
+let fall (game: gameState) (timer: timerData) (sound: soundData) =
     game.brick.position.y <- game.brick.position.y + 1;
     if collision game
     then (
@@ -75,6 +75,7 @@ let fall (game: gameState) (timer: timerData) =
         copy_brick_to_board game;
 
         let lines_removed = remove_lines game in
+        (if game.playing_music && lines_removed > 0 then Sdlmixer.play_sound sound.click);
         game.points <- game.points + lines_removed;
         timer.speed <- max  (timer.speed *. (Utils.pow 0.98  lines_removed))
                             (if game.pressing_down then 0.03 else 0.3);
@@ -86,38 +87,42 @@ let fall (game: gameState) (timer: timerData) =
     )
 
 let handle (game_data: gameData) event =
-    let game   = game_data.game_state in
+    let game    = game_data.game_state in
     let timer   = game_data.timer_data in
     let pencil  = game_data.pencil_data in
+    let sound   = game_data.sound_data in
 
     match event with
     | Sdlevent.USER 0 ->
-        fall game timer;
+        fall game timer sound;
         Pencil.draw game pencil
 
-    | KEYDOWN { keysym = KEY_s } ->
+    | KEYDOWN { keysym = KEY_DOWN } ->
         game.pressing_down <- true;
         timer.speed <- timer.speed *. 0.1;
         Sdlevent.add [USER 0]
-    | KEYUP { keysym = KEY_s } ->
+    | KEYUP { keysym = KEY_DOWN } ->
         game.pressing_down <- false;
         timer.speed <- timer.speed *. 10.0;
-    | KEYDOWN { keysym = KEY_a } ->
+    | KEYDOWN { keysym = KEY_LEFT } ->
         game.brick.position.x <- game.brick.position.x - 1;
         if collision game
         then    game.brick.position.x <- game.brick.position.x + 1
         else    Pencil.draw game pencil
-    | KEYDOWN { keysym = KEY_d } ->
+    | KEYDOWN { keysym = KEY_RIGHT } ->
         game.brick.position.x <- game.brick.position.x + 1;
         if collision game
         then    game.brick.position.x <- game.brick.position.x - 1
         else    Pencil.draw game pencil
-    | KEYDOWN { keysym = KEY_w } ->
+    | KEYDOWN { keysym = KEY_UP } ->
         Brick.rotate game.brick;
         if collision game
         then    ignore (Brick.rotate_n_times game.brick 3);
         Pencil.draw game pencil
-    | KEYDOWN { keysym = KEY_SPACE } ->
-        game_end game
+    | KEYDOWN { keysym = KEY_m } ->
+        game.playing_music <- not game.playing_music;
+        if game.playing_music
+        then Sdlmixer.resume_music ()
+        else Sdlmixer.pause_music ()
     | event ->
         ()

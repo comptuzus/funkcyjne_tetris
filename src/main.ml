@@ -40,6 +40,9 @@ let run () =
             black_surf  = Sdlloader.load_image "assets/black_surf.png";
             font_40     = Sdlttf.open_font "assets/8bitOperatorPlus8-Regular.ttf" 40;
             font_30     = Sdlttf.open_font "assets/8bitOperatorPlus8-Regular.ttf" 30
+        };
+        sound_data = {
+            click   = Sdlmixer.loadWAV "assets/click.wav"
         }
     } in
     let timer_cb () = Sdlevent.add [USER 0] in
@@ -50,30 +53,33 @@ let run () =
     loop game;
     game.timer_data.running <- false;
     Thread.join timer_thread
-    
+
 let read_command_line () =
     let seed_set = ref false in
     let music_set = ref false in
     let i = ref 0 in
     let len = Array.length Sys.argv in
-    
+
     while !i < len do
         (match Sys.argv.(!i) with
-        | "-seed"   ->
+        | "--seed"   ->
             i := !i + 1;
             Random.init (int_of_string Sys.argv.(!i));
             seed_set := true
-        | "-music"  ->
-            i := !i + 1;        
+        | "--music"  ->
+            i := !i + 1;
+            Sdlmixer.play_music (Sdlmixer.load_music Sys.argv.(!i));            
             music_set := true
         | _         ->
             ()
         );
         i := !i + 1
     done;
-    
-    if not !seed_set
-    then Random.self_init ()
+
+    (if not !seed_set
+    then Random.self_init ());
+    if not !music_set
+    then Sdlmixer.play_music (Sdlmixer.load_music "assets/music.mp3")
 
 let main () =
     Sdl.init [`VIDEO; `AUDIO];

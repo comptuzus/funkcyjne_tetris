@@ -26,6 +26,7 @@ type gameState = {
     mutable points:         int;
     mutable highscore:      int;
     mutable pressing_down:  bool;
+    mutable playing_music:  bool;
 }
 
 type pencilData = {
@@ -45,8 +46,13 @@ type timerData = {
     mutable speed: float
 }
 
+type soundData = {
+    mutable click:  Sdlmixer.chunk;
+}
+
 type gameData = {
     mutable game_state:     gameState;
     mutable timer_data:     timerData;
-    mutable pencil_data:    pencilData
+    mutable pencil_data:    pencilData;
+    mutable sound_data:     soundData;
 }
