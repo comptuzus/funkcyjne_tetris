@@ -26,6 +26,14 @@ let collision (game: gameState) =
     );
     not !not_ret
 
+let rec drop (game: gameState) =
+        if collision game
+        then (
+            game.brick.position.y <- game.brick.position.y - 1;
+            drop game
+        )
+        else game.brick.position.y
+
 let remove_line (game: gameState) n =
     let rec aux i =
         if i > 0
@@ -124,5 +132,12 @@ let handle (game_data: gameData) event =
         if game.playing_music
         then Sdlmixer.resume_music ()
         else Sdlmixer.pause_music ()
+    | KEYDOWN { keysym = KEY_SPACE } ->
+        game.brick.position.y <- game.board_size.y;
+        let n = drop game in
+            game.brick.position.y <- game.brick.position.y + n;
+            if collision game
+            then    game.brick.position.y <- game.brick.position.y - n
+            else    Pencil.draw game pencil
     | event ->
         ()
