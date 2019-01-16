@@ -22,7 +22,7 @@ let rotate_n_times brick n =
     in aux n
     
 let create number =
-    let color   =   Random.int 4 in
+    let color   =   number in
     let rotation=   Random.int 4 in
     let size    =   match number with
                     | 0 -> 2

@@ -32,7 +32,7 @@ let run () =
         };
         pencil_data = {
             screen      = Sdlvideo.set_video_mode 800 600 [`DOUBLEBUF];
-            squares     = Array.init 4 (fun i -> Sdlloader.load_image ("assets/square_" ^ (string_of_int i) ^ ".png"));
+            squares     = Array.init 7 (fun i -> Sdlloader.load_image ("assets/square_" ^ (string_of_int i) ^ ".png"));
             board       = Sdlloader.load_image "assets/board.png";
             preview     = Sdlloader.load_image "assets/preview.png";
             llamacorn   = Sdlloader.load_image "assets/llamacorn.png";
