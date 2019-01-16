@@ -84,7 +84,7 @@ let fall (game: gameState) (timer: timerData) (sound: soundData) =
 
         let lines_removed = remove_lines game in
         (if game.playing_music && lines_removed > 0 then Sdlmixer.play_sound sound.click);
-        game.points <- game.points + lines_removed;
+        game.points <- game.points + (int_of_float ((float_of_int lines_removed) ** 2.0));
         timer.speed <- max  (timer.speed *. (Utils.pow 0.98  lines_removed))
                             (if game.pressing_down then 0.03 else 0.3);
 
